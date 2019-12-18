@@ -8,6 +8,7 @@ const walletPath = process.env.HD_WALLET_PATH;
 const mnemonic = process.env.MNEMONIC;
 const bech32Prefix = process.env.BECH32_PREFIX;
 const denom = process.env.DENOM;
+const memo = process.env.MEMO;
 const cosmos = cosmosjs.network(lcdAddress, chainId);
 
 cosmos.setPath(walletPath);
@@ -20,7 +21,22 @@ const express = require('express')
 const app = express()
 const port = 3456
 
+const path = require('path');
+
+app.set('view engine', 'pug')
+
+
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', function (req, res) {
+    // res.render('index', { title: 'Hey', message: 'Hello there!' })
+    res.render('index', {
+        chainId: chainId,
+        denom: denom
+    });
+});
 
 app.post('/airdrop', (req, res) => {
     cosmos.getAccounts(address).then(data => {
@@ -33,7 +49,7 @@ app.post('/airdrop', (req, res) => {
             feeDenom: denom,
             fee: 0,
             gas: 200000,
-            memo: "Desmo Faucet",
+            memo: memo,
             account_number: data.value.account_number,
             sequence: data.value.sequence
         });
