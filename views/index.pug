@@ -13,15 +13,27 @@ html(lang='en')
         nav(class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top py-3 shadow-sm" id="mainNav")
             div(class="container d-flex justify-content-between")
                 a(class="navbar-brand text-light d-flex align-items-center" href="#page-top") <img class="mr-2" src="/img/desmos-logo.svg" alt="DESMOS" /> Desmos Faucet
-        section(class="page-section mb-auto" style="margin-top:-6rem;")
+        section(class="page-section mb-auto" style="margin-top:-8rem;")
         main(class="inner cover container text-center")
-            h1(class="font-weight-bold text-secondary") Hello, dreamer!
-            p(class="lead pt-3")!='You arrive here because you are different. Put your address in the box below and I will tip you some <mark>'+denom+'</mark> to start with. Let\'s dream...🙏'  
+            div(class="row")
+                div(class="col-md-8 offset-md-2")
+                    h2(class="font-weight-bold" style="display:none") Hello, dreamer!
+                    p(class="lead pt-2" style="display:none")!='You\'re here because you know something. What you know you can\'t explain, but you feel it. You\'ve felt it your entire life, that there\'s something wrong with the world. You don\'t know what it is, but it\'s there, like a splinter in your mind, driving you mad. It is this feeling that has brought you to me. Do you know what I\'m talking about?'
+                    form(class="form-inline justify-content-center" style="display:none")
+                        p(class="text-primary d-block w-100")!='Put your address in the box below and get some <mark>'+denom+'</mark> on <mark>'+chainId+'</mark> to start with. 🙏'
+                        div(class="form-check w-100")
+                            div(class="from-input w-100")
+                                label(class="sr-only" for="address") Address
+                                input(type="text" class="form-control mb-2 mr-sm-2 w-75" id="address" placeholder="Your Desmos Address" required)
+                                button(type="submit" class="btn btn-primary mb-2 w25") Start
+                                div(class="invalid-feedback") Please provide a valid Desmos address.    
+                            div(class="loader align-items-center" style="display:none")    
+                                div(class="spinner-border text-primary mr-2" role="status")
+                                span Dreaming...
         footer(class="mt-auto bg-light py-3")
             div(class="container")
                 div(class="small text-center text-muted") Copyright &copy; 2019 - <a href="https://desmos.network" >Desmos Network</a>
         script(src="/vendor/jquery/jquery.min.js")
         script(src="/vendor/bootstrap/js/bootstrap.bundle.min.js")
         script(src="/vendor/jquery-easing/jquery.easing.min.js")
-        script(src="/vendor/magnific-popup/jquery.magnific-popup.min.js")
-        script(src="/js/creative.min.js")
+        script(src="/js/main.js")

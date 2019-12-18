@@ -45,7 +45,7 @@ app.post('/airdrop', (req, res) => {
             from_address: address,
             to_address: req.body.address,
             amountDenom: denom,
-            amount: 1,
+            amount: 1000,
             feeDenom: denom,
             fee: 0,
             gas: 200000,

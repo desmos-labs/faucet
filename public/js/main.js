@@ -39,20 +39,41 @@
   // Collapse the navbar when page is scrolled
   $(window).scroll(navbarCollapse);
 
-  // Magnific popup calls
-  $('#portfolio').magnificPopup({
-    delegate: 'a',
-    type: 'image',
-    tLoading: 'Loading image #%curr%...',
-    mainClass: 'mfp-img-mobile',
-    gallery: {
-      enabled: true,
-      navigateByImgClick: true,
-      preload: [0, 1]
-    },
-    image: {
-      tError: '<a href="%url%">The image #%curr%</a> could not be loaded.'
-    }
+  $('main h2').fadeIn(1000);
+  $('main .lead').delay(1500).fadeIn(1500);
+  $('main form').delay(4500).fadeIn(800);
+  $('main form #address').change(function(e){
+    $('main form').removeClass('was-validated');
+    let addressEl = document.getElementById('address');
+    addressEl.setCustomValidity('');
   });
+  $('main form').submit(function(e){
+    console.log('submit')
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.checkValidity() === false) {
+          // e.preventDefault();
+          // e.stopPropagation();
+    }
+    else {
+      let accountRegEx = new RegExp('^desmos1[a-z0-9]{38}$', 'gm');
 
+      let addressEl = document.getElementById('address');
+
+      console.log(addressEl.value);
+      if (addressEl.value.match(accountRegEx)){
+        console.log('valid');
+        // addressEl.setCustomValidity('');
+        $('main form .from-input').hide();
+        $('main form div.loader').addClass('d-flex').show();
+      }
+      else{
+        console.log('invalid');
+        addressEl.setCustomValidity('The address is not a valid Desmos address.');
+      }
+      
+    }
+    $(this).addClass('was-validated');
+    // console.log()
+  });
 })(jQuery); // End of use strict
