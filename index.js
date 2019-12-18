@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cosmosjs from '@cosmostation/cosmosjs'
+import { reset } from 'nodemon';
 
 const chainId = process.env.CHAIN_ID;
 const lcdAddress = process.env.LCD_ADDRESS;
@@ -21,10 +22,22 @@ const express = require('express')
 const app = express()
 const port = 3456
 
-const path = require('path');
+const airdropInterval = 24*60*60*1000;
+
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+
+const adapter = new FileSync('db.json')
+const db = low(adapter)
+const historyStore = db.get('history');
+// db.defaults({ history: [] })
+//   .write()
+  
+
 
 app.set('view engine', 'pug')
 
+const path = require('path');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
@@ -39,26 +52,52 @@ app.get('/', function (req, res) {
 });
 
 app.post('/airdrop', (req, res) => {
-    cosmos.getAccounts(address).then(data => {
-        let stdSignMsg = cosmos.NewStdMsg({
-            type: "cosmos-sdk/MsgSend",
-            from_address: address,
-            to_address: req.body.address,
-            amountDenom: denom,
-            amount: 1000,
-            feeDenom: denom,
-            fee: 0,
-            gas: 200000,
-            memo: memo,
-            account_number: data.value.account_number,
-            sequence: data.value.sequence
-        });
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
-        cosmos.broadcast(signedTx).then(response => {
-            res.send(response)
-        });
-    })
+    let existingIP = historyStore
+        .find({ ip: ip })
+        .value()
+
+        console.log(Date.now()-existingIP.airdropTime);
+        console.log(airdropInterval);
+
+    if ((typeof existingIP == "undefined") || (Date.now()-existingIP.airdropTime >= airdropInterval)){
+        
+        cosmos.getAccounts(address).then(data => {
+            let stdSignMsg = cosmos.NewStdMsg({
+                type: "cosmos-sdk/MsgSend",
+                from_address: address,
+                to_address: req.body.address,
+                amountDenom: denom,
+                amount: 1,
+                feeDenom: denom,
+                fee: 0,
+                gas: 200000,
+                memo: memo,
+                account_number: data.result.value.account_number,
+                sequence: data.result.value.sequence
+            });
+
+            const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
+            cosmos.broadcast(signedTx).then(response => {
+                let now = Date.now();
+                if (typeof existingIP !== "undefined"){
+                    historyStore.find({ ip: ip })
+                        .assign({airdropTime: now})
+                        .write();
+                }
+                else{
+                    historyStore
+                        .push({ ip: ip, airdropTime: now})
+                        .write()
+                }
+                res.send(response)
+            });
+        })
+    }
+    else{
+        res.send({message: 'You are not ready. Pleae come back again tomorrow.'});
+    }
 })
 
 app.listen(port, () => console.log(`Airdropping... ${port}!`))

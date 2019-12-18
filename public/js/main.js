@@ -66,6 +66,16 @@
         // addressEl.setCustomValidity('');
         $('main form .from-input').hide();
         $('main form div.loader').addClass('d-flex').show();
+
+        $.post('/airdrop', { address: addressEl.value})
+          .done(function(data){
+            console.log(data);
+            $('main form div.loader').removeClass('d-flex').hide();
+            if (data.message){
+              $('main form .success-message').text(data.message);
+            }
+            $('main form .success-message').fadeIn('slow');
+          })
       }
       else{
         console.log('invalid');
