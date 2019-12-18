@@ -8,3 +8,5 @@
 # node.js
 .env
 node_modules
+
+db.json
