@@ -48,7 +48,7 @@
     addressEl.setCustomValidity('');
   });
   $('main form').submit(function(e){
-    console.log('submit')
+    // console.log('submit')
     e.preventDefault();
     e.stopPropagation();
     if (this.checkValidity() === false) {
@@ -60,16 +60,16 @@
 
       let addressEl = document.getElementById('address');
 
-      console.log(addressEl.value);
+      // console.log(addressEl.value);
       if (addressEl.value.match(accountRegEx)){
-        console.log('valid');
+        // console.log('valid');
         // addressEl.setCustomValidity('');
         $('main form .from-input').hide();
         $('main form div.loader').addClass('d-flex').show();
 
         $.post('/airdrop', { address: addressEl.value})
           .done(function(data){
-            console.log(data);
+            // console.log(data);
             $('main form div.loader').removeClass('d-flex').hide();
             if (data.message){
               $('main form .success-message').text(data.message);
@@ -78,7 +78,7 @@
           })
       }
       else{
-        console.log('invalid');
+        // console.log('invalid');
         addressEl.setCustomValidity('The address is not a valid Desmos address.');
       }
       

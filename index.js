@@ -20,6 +20,9 @@ cosmos.setBech32MainPrefix(bech32Prefix);
 const address = cosmos.getAddress(mnemonic);
 const ecpairPriv = cosmos.getECPairPriv(mnemonic);
 
+const compression = require('compression');
+const helmet = require('helmet');
+
 const express = require('express')
 const app = express()
 const port = 3456
@@ -35,7 +38,8 @@ const historyStore = db.get('history');
 // db.defaults({ history: [] })
 //   .write()
   
-
+app.use(compression());
+app.use(helmet());
 
 app.set('view engine', 'pug')
 
@@ -60,8 +64,8 @@ app.post('/airdrop', (req, res) => {
         .find({ ip: ip })
         .value()
 
-        console.log(Date.now()-existingIP.airdropTime);
-        console.log(airdropInterval);
+        // console.log(Date.now()-existingIP.airdropTime);
+        // console.log(airdropInterval);
 
     if ((typeof existingIP == "undefined") || (Date.now()-existingIP.airdropTime >= airdropInterval)){
         
