@@ -4,7 +4,7 @@ Rename `.env.sample` to `.env` and update the faucet wallet mnemonic phrase.
 
 ``` sh
 npm install --save
-npm start
+npm dev
 ```
 
 Then post an address to `http://localhost:3456/airdrop` endpoint.
