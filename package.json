@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node index.js",
+    "start": "babel-node index.js",
+    "dev": "nodemon --exec babel-node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -12,9 +13,11 @@
   "dependencies": {
     "@cosmostation/cosmosjs": "^0.2.3",
     "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-recaptcha": "^5.0.1",
+    "helmet": "^3.21.2",
     "lowdb": "^1.0.0",
     "pug": "^2.0.4"
   },

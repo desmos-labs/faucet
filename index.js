@@ -8,7 +8,9 @@ const lcdAddress = process.env.LCD_ADDRESS;
 const walletPath = process.env.HD_WALLET_PATH;
 const mnemonic = process.env.MNEMONIC;
 const bech32Prefix = process.env.BECH32_PREFIX;
+const amount = process.env.AMOUNT;
 const denom = process.env.DENOM;
+const minutes = parseInt(process.env.MINUTES);
 const memo = process.env.MEMO;
 const cosmos = cosmosjs.network(lcdAddress, chainId);
 
@@ -18,11 +20,14 @@ cosmos.setBech32MainPrefix(bech32Prefix);
 const address = cosmos.getAddress(mnemonic);
 const ecpairPriv = cosmos.getECPairPriv(mnemonic);
 
+const compression = require('compression');
+const helmet = require('helmet');
+
 const express = require('express')
 const app = express()
 const port = 3456
 
-const airdropInterval = 24*60*60*1000;
+const airdropInterval = minutes*60*1000;
 
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
@@ -33,7 +38,8 @@ const historyStore = db.get('history');
 // db.defaults({ history: [] })
 //   .write()
   
-
+app.use(compression());
+app.use(helmet());
 
 app.set('view engine', 'pug')
 
@@ -58,8 +64,8 @@ app.post('/airdrop', (req, res) => {
         .find({ ip: ip })
         .value()
 
-        console.log(Date.now()-existingIP.airdropTime);
-        console.log(airdropInterval);
+        // console.log(Date.now()-existingIP.airdropTime);
+        // console.log(airdropInterval);
 
     if ((typeof existingIP == "undefined") || (Date.now()-existingIP.airdropTime >= airdropInterval)){
         
@@ -69,7 +75,7 @@ app.post('/airdrop', (req, res) => {
                 from_address: address,
                 to_address: req.body.address,
                 amountDenom: denom,
-                amount: 1,
+                amount: amount,
                 feeDenom: denom,
                 fee: 0,
                 gas: 200000,
