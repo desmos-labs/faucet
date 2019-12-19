@@ -50,7 +50,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
-    // res.render('index', { title: 'Hey', message: 'Hello there!' })
     res.render('index', {
         chainId: chainId,
         denom: denom
@@ -60,12 +59,12 @@ app.get('/', function (req, res) {
 app.post('/airdrop', (req, res) => {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
+    ip = ip.split(",").map(item => item.trim());
+    ip = ip[0];
+
     let existingIP = historyStore
         .find({ ip: ip })
         .value()
-
-        // console.log(Date.now()-existingIP.airdropTime);
-        // console.log(airdropInterval);
 
     if ((typeof existingIP == "undefined") || (Date.now()-existingIP.airdropTime >= airdropInterval)){
         
