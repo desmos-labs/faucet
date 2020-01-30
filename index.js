@@ -101,7 +101,7 @@ app.post('/airdrop', (req, res) => {
         })
     }
     else{
-        res.send({message: 'You are not ready. Pleae come back again tomorrow.'});
+        res.send({message: 'You are not ready. Please come back again tomorrow.'});
     }
 })
 
