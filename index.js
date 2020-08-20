@@ -146,7 +146,7 @@ app.post('/airdrop', (req, res) => {
         .find({ ip: ip })
         .value()
      
-    if (((typeof existingIP == "undefined") || (Date.now()-existingIP.airdropTime >= airdropInterval)) && !is_Gvalidator(ip) && !is_Gaddress(req.body.address)){
+    if (((typeof existingIP == "undefined") || (Date.now()-existingIP.airdropTime >= airdropInterval)) && !is_Gvalidator(req.body.address) && !is_Gaddress(req.body.address)){
         
         cosmos.getAccounts(address).then(data => {
             let stdSignMsg = cosmos.NewStdMsg({
