@@ -1,8 +1,0 @@
-prefix=/home/veki/crawly/install
-
-Name: husky_navigation
-Description: Description of husky_navigation
-Version: 0.2.7
-Cflags: 
-Libs: -L/home/veki/crawly/install/lib 
-Requires: 

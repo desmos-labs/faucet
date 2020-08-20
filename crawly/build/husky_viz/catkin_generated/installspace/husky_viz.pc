@@ -1,8 +1,0 @@
-prefix=/home/veki/crawly/install
-
-Name: husky_viz
-Description: Description of husky_viz
-Version: 0.2.2
-Cflags: 
-Libs: -L/home/veki/crawly/install/lib 
-Requires: 

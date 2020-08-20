@@ -1,8 +1,0 @@
-prefix=/home/veki/crawly/install
-
-Name: husky_gazebo
-Description: Description of husky_gazebo
-Version: 0.2.6
-Cflags: 
-Libs: -L/home/veki/crawly/install/lib 
-Requires: 

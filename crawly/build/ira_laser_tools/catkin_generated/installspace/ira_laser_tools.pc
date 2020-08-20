@@ -1,8 +1,0 @@
-prefix=/home/veki/crawly/install
-
-Name: ira_laser_tools
-Description: Description of ira_laser_tools
-Version: 1.0.0
-Cflags: -I/home/veki/crawly/install/include
-Libs: -L/home/veki/crawly/install/lib 
-Requires: 

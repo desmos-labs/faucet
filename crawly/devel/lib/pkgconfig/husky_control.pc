@@ -1,8 +1,0 @@
-prefix=/home/veki/crawly/devel
-
-Name: husky_control
-Description: Description of husky_control
-Version: 0.2.7
-Cflags: 
-Libs: -L/home/veki/crawly/devel/lib 
-Requires: 

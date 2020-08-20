@@ -1,2 +1,0 @@
-crawly_robot:husky_control:husky_description:husky_gazebo:husky_navigation:husky_viz:ira_laser_tools
--DCATKIN_DEVEL_PREFIX=/home/veki/crawly/devel -DCMAKE_INSTALL_PREFIX=/home/veki/crawly/install -G Unix Makefiles

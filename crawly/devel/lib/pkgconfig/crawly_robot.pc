@@ -1,8 +1,0 @@
-prefix=/home/veki/crawly/devel
-
-Name: crawly_robot
-Description: Description of crawly_robot
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/veki/crawly/devel/lib 
-Requires: 
