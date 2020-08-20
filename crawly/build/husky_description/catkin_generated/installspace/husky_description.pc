@@ -1,0 +1,8 @@
+prefix=/home/veki/crawly/install
+
+Name: husky_description
+Description: Description of husky_description
+Version: 0.2.7
+Cflags: 
+Libs: -L/home/veki/crawly/install/lib 
+Requires: 
