@@ -13,8 +13,6 @@ const amount = process.env.AMOUNT;
 const denom = process.env.DENOM;
 const minutes = parseInt(process.env.MINUTES);
 const memo = process.env.MEMO;
-const amountLimit = parseInt(process.env.AMOUNT_LIMIT);
-const votingPowerLimit = parseInt(process.env.VOTING_POWER_LIMIT)
 const cosmos = cosmosjs.network(lcdAddress, chainId);
 
 cosmos.setPath(walletPath);
@@ -57,10 +55,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//fucntion to assign default values if not existed in .env
+
+function GetRulesLimit(envVaraible, defaultvalue)
+{
+    var value =  parseInt(process.env[envVaraible]);
+    if(value!=undefined)
+        return value;
+    else
+        return defaultvalue;
+}
+
 //fuction check if the address has a validator with voting power higher than defined retriction rule 
 const gValidator = async(desmosAddress) => {
     let url1 = lcdAddress+"/validatorsets/latest";
     let url2= lcdAddress+'/staking/delegators/'+desmosAddress+'/validators';
+    let votingPowerLimit = GetRulesLimit("VOTING_POWER_LIMIT", 200);
     let flagmV = false;
    await  axios.all([
         axios.get(url1),
@@ -71,10 +81,10 @@ const gValidator = async(desmosAddress) => {
         let assocValidators = response2.data.result; 
                         console.log("checking associated validator to the delegator address....")
                         //console.log(assocValidators)      
-                        let assocValidatorsAddress = assocValidators.map(assocValidator => { return assocValidator.operator_address; });
+                        let assocValidatorsAddress = assocValidators.map(assocValidator => { return assocValidator.consensus_pubkey; });
                         //console.log("Cross-linked Validators:....")
                         //console.log(assocValidatorsAddress)
-                        let matchedValidators = validatorsList.filter(lv => assocValidatorsAddress.includes(lv.address));
+                        let matchedValidators = validatorsList.filter(lv => assocValidatorsAddress.includes(lv.pub_key));
                         //console.log("Matched ones....")
                         //console.log(matchedValidators)
                         if(Array.isArray(matchedValidators) && matchedValidators.length){
@@ -82,6 +92,7 @@ const gValidator = async(desmosAddress) => {
                             matchedValidators.forEach( (mValidator,i) => {
                                 matchedValidators[i].voting_power = parseInt(matchedValidators[i].voting_power);
                                // console.log("stacking power: "+ matchedValidators[i].voting_power);
+                              
                                 if(matchedValidators[i].voting_power > votingPowerLimit){ 
                                     flagmV = true; 
                                 }
@@ -101,6 +112,7 @@ const gValidator = async(desmosAddress) => {
 const gAddress = async (desmosAddress) => {
     let url3 = lcdAddress + '/bank/balances/'+desmosAddress;
     let res = await axios.get(url3);
+    let amountLimit = GetRulesLimit("AMOUNT_LIMIT", 10000000);
     let flagmA = false;
     let  balances = res.data.result;
                         
@@ -144,6 +156,8 @@ const rulesChecked  = async (ip, desmosAddress) => {
 }
 
 
+
+
 app.get('/', function (req, res) {
     res.render('index', {
         chainId: chainId,
@@ -153,9 +167,9 @@ app.get('/', function (req, res) {
 
 app.post('/airdrop', (req, res) => {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    
-    if (rulesChecked(ip,req.body.address)){
-
+    rulesChecked(ip,req.body.address).then( (result) => {
+    if ( result == true){
+                       
             cosmos.getAccounts(address).then(data => {
                 let stdSignMsg = cosmos.NewStdMsg({
                     type: "cosmos-sdk/MsgSend",
@@ -189,10 +203,11 @@ app.post('/airdrop', (req, res) => {
             })
         }
         else{
+            
             res.send({message: 'You are not ready. Please come back again tomorrow.'});
         }
-        //console.log(response1.data);
-        //console.log(response2.data);
+        
+    });
    
     
      
