@@ -178,7 +178,7 @@ app.post('/airdrop', (req, res) => {
                     amountDenom: denom,
                     amount: amount,
                     feeDenom: denom,
-                    fee: 0,
+                    fee: 10000,
                     gas: 200000,
                     memo: memo,
                     account_number: data.result.value.account_number,
