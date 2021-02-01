@@ -171,6 +171,7 @@ app.post('/airdrop', (req, res) => {
     if ( result == true){
                        
             cosmos.getAccounts(address).then(data => {
+
                 
                 let stdSignMsg = cosmos.newStdMsg({
                     msgs: [
