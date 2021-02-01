@@ -69,7 +69,7 @@ function GetRulesLimit(envVaraible, defaultvalue)
 //fuction check if the address has a validator with voting power higher than defined retriction rule 
 const gValidator = async(desmosAddress) => {
     let url1 = lcdAddress+"/validatorsets/latest";
-    let url2= lcdAddress+'/staking/delegators/'+desmosAddress+'/validators';
+    let url2= lcdAddress+'/cosmos/staking/v1beta1/delegators/'+desmosAddress+'/validators';
     let votingPowerLimit = GetRulesLimit("VOTING_POWER_LIMIT", 200);
     let flagmV = false;
    await  axios.all([
@@ -78,13 +78,13 @@ const gValidator = async(desmosAddress) => {
       // axios.get(url3),
     ]).then(axios.spread((response1, response2) => {
         let validatorsList = response1.data.result.validators;
-        let assocValidators = response2.data.result; 
+        let assocValidators = response2.data.validators; 
                         console.log("checking associated validator to the delegator address....")
                         //console.log(assocValidators)      
-                        let assocValidatorsAddress = assocValidators.map(assocValidator => { return assocValidator.consensus_pubkey; });
+                        let assocValidatorsAddress = assocValidators.map(assocValidator => { return assocValidator.consensus_pubkey.key; });
                         //console.log("Cross-linked Validators:....")
                         //console.log(assocValidatorsAddress)
-                        let matchedValidators = validatorsList.filter(lv => assocValidatorsAddress.includes(lv.pub_key));
+                        let matchedValidators = validatorsList.filter(lv => assocValidatorsAddress.includes(lv.pub_key.value));
                         //console.log("Matched ones....")
                         //console.log(matchedValidators)
                         if(Array.isArray(matchedValidators) && matchedValidators.length){
@@ -110,11 +110,11 @@ const gValidator = async(desmosAddress) => {
 //function to check address's balance satisfy rules limits 
 
 const gAddress = async (desmosAddress) => {
-    let url3 = lcdAddress + '/bank/balances/'+desmosAddress;
+    let url3 = lcdAddress + '/cosmos/bank/v1beta1/balances/'+desmosAddress;
     let res = await axios.get(url3);
     let amountLimit = GetRulesLimit("AMOUNT_LIMIT", 10000000);
     let flagmA = false;
-    let  balances = res.data.result;
+    let  balances = res.data.balances;
                         
                         console.log("checking the balances with ....")
                        // console.log(balances);
@@ -171,20 +171,31 @@ app.post('/airdrop', (req, res) => {
     if ( result == true){
                        
             cosmos.getAccounts(address).then(data => {
-                let stdSignMsg = cosmos.NewStdMsg({
-                    type: "cosmos-sdk/MsgSend",
-                    from_address: address,
-                    to_address: req.body.address,
-                    amountDenom: denom,
-                    amount: amount,
-                    feeDenom: denom,
-                    fee: 10000,
-                    gas: 200000,
-                    memo: memo,
-                    account_number: data.result.value.account_number,
-                    sequence: data.result.value.sequence
-                });
 
+                
+                let stdSignMsg = cosmos.newStdMsg({
+                    msgs: [
+                        {
+                            type: "cosmos-sdk/MsgSend",
+                            value: {
+                                amount: [
+                                    {
+                                        amount: String(amount),
+                                        denom: denom
+                                    }
+                                ],
+                                from_address: address,
+                                to_address: req.body.address
+                            }
+                        }
+                    ],
+                    chain_id: chainId,
+                    fee: { amount: [ { amount: String(0), denom: denom } ], gas: String(200000) },
+                    memo: memo,
+                    account_number: String(data.result.value.account_number),
+                    sequence: String(data.result.value.sequence)
+                });
+            
                 const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
                 cosmos.broadcast(signedTx).then(response => {
                     let now = Date.now();
