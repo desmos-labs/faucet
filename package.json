@@ -20,7 +20,7 @@
     "express-recaptcha": "^5.0.2",
     "helmet": "^4.4.1",
     "lowdb": "^1.0.0",
-    "pug": "^3.0.0"
+    "pug": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
